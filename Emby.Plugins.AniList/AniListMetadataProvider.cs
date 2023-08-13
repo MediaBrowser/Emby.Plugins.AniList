@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Model.Serialization;
-using Emby.Anime;
 
 //API v2
 namespace Emby.Plugins.AniList

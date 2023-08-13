@@ -13,7 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Configuration;
-using Emby.Anime;
 using MediaBrowser.Controller.Entities.Movies;
 
 //API v2

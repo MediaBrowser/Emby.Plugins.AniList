@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Entities;
-using Emby.Anime;
 using MediaBrowser.Common.Net;
 using System.IO;
 using MediaBrowser.Model.Net;
