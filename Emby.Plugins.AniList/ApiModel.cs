@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Emby.Plugins.AniList
 {
@@ -40,29 +41,18 @@ namespace Emby.Plugins.AniList
         public static string HIATUS { get { return "HIATUS"; } }
     }
 
-    public class Medium
+    public class Medium : BaseMedia
     {
-        public int id { get; set; }
-        public Title title { get; set; }
-        public CoverImage coverImage { get; set; }
         public string format { get; set; }
         public string type { get; set; }
-        public int averageScore { get; set; }
         public int popularity { get; set; }
-        public int episodes { get; set; }
-        public int duration { get; set; }
         public string season { get; set; }
         public string hashtag { get; set; }
         public bool isAdult { get; set; }
-        public StartDate startDate { get; set; }
-        public EndDate endDate { get; set; }
         public object bannerImage { get; set; }
-        public string status { get; set; }
         public object chapters { get; set; }
         public object volumes { get; set; }
-        public string description { get; set; }
         public int meanScore { get; set; }
-        public List<string> genres { get; set; }
         public List<object> synonyms { get; set; }
         public object nextAiringEpisode { get; set; }
     }
@@ -78,35 +68,39 @@ namespace Emby.Plugins.AniList
         public Media Media { get; set; }
     }
 
-    public class Media
+    public class BaseMedia
     {
+        public int id { get; set; }
+        public Title title { get; set; }
+        public CoverImage coverImage { get; set; }
+        public string description { get; set; }
+        public StartDate startDate { get; set; }
+        public EndDate endDate { get; set; }
+        public int episodes { get; set; }
+        public int duration { get; set; }
+        public int averageScore { get; set; }
+        public Trailer trailer { get; set; }
+        public string status { get; set; }
+        public List<string> genres { get; set; }
+        public Studios studios { get; set; }
+        public List<Tag> tags { get; set; }
         public Characters characters { get; set; }
+    }
+
+    public class Media : BaseMedia
+    {
         public int popularity { get; set; }
         public object hashtag { get; set; }
         public bool isAdult { get; set; }
-        public int id { get; set; }
-        public Title title { get; set; }
-        public StartDate startDate { get; set; }
-        public EndDate endDate { get; set; }
-        public CoverImage coverImage { get; set; }
         public object bannerImage { get; set; }
         public string format { get; set; }
         public string type { get; set; }
-        public string status { get; set; }
-        public int episodes { get; set; }
-        public int duration { get; set; }
         public object chapters { get; set; }
         public object volumes { get; set; }
         public string season { get; set; }
-        public string description { get; set; }
-        public int averageScore { get; set; }
         public int meanScore { get; set; }
-        public List<string> genres { get; set; }
         public List<object> synonyms { get; set; }
         public object nextAiringEpisode { get; set; }
-        public Studios studios { get; set; }
-        public Trailer trailer { get; set; }
-        public List<Tag> tags { get; set; }
     }
     public class PageInfo
     {
@@ -201,5 +195,10 @@ namespace Emby.Plugins.AniList
     public class RootObject
     {
         public Data data { get; set; }
+
+        public BaseMedia GetMedia()
+        {
+            return (data?.Media as BaseMedia) ?? data?.Page.media?.FirstOrDefault();
+        }
     }
 }

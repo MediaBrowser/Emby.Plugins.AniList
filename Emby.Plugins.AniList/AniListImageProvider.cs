@@ -48,7 +48,9 @@ namespace Emby.Plugins.AniList
 
             if (!string.IsNullOrEmpty(aid))
             {
-                var primary = _api.Get_ImageUrl(await _api.WebRequestAPI(_api.AniList_anime_link.Replace("{0}", aid), cancellationToken));
+                var webContent = await _api.WebRequestAPI(_api.AniList_anime_link.Replace("{0}", aid), cancellationToken);
+                var media = webContent.GetMedia();
+                var primary = _api.Get_ImageUrl(media);
                 list.Add(new RemoteImageInfo
                 {
                     ProviderName = Name,

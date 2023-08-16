@@ -25,11 +25,11 @@ namespace Emby.Plugins.AniList
             
         }
 
-        protected override MetadataResult<Series> _GetMetadata(MetadataResult<Series> result, RootObject WebContent)
+        protected override MetadataResult<Series> _GetMetadata(MetadataResult<Series> result, BaseMedia media)
         {
             if (result.HasMetadata)
             {
-                string status = WebContent.data.Media.status;
+                string status = media.status;
                 if (status == Status.RELEASING || status == Status.NOT_YET_RELEASED)
                 {
                     result.Item.Status = SeriesStatus.Continuing;

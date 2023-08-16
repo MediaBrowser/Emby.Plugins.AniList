@@ -31,7 +31,7 @@ namespace Emby.Plugins.AniList
             _paths = appPaths;
         }
 
-        protected virtual MetadataResult<T> _GetMetadata(MetadataResult<T> result, RootObject WebContent)
+        protected virtual MetadataResult<T> _GetMetadata(MetadataResult<T> result, BaseMedia media)
         {
             return result;
         }
@@ -55,26 +55,35 @@ namespace Emby.Plugins.AniList
             var result = new MetadataResult<T>();
 
             result.Item = new T();
+
+            var media = WebContent?.GetMedia();
+
+            if (media == null)
+            {
+                return result;
+            }
+
             result.HasMetadata = true;
 
-            result.Item.Name = _api.SelectName(WebContent, info.MetadataLanguage);
-            result.Item.OriginalTitle = WebContent.data.Media.title.native;
+            result.Item.Name = _api.SelectName(media, info.MetadataLanguage);
 
-            result.People = await _api.GetPersonInfo(WebContent.data.Media.id, cancellationToken);
-            foreach (var studio in _api.Get_Studio(WebContent))
+            result.Item.OriginalTitle = media.title.native;
+
+            result.People = await _api.GetPersonInfo(media.id, cancellationToken);
+            foreach (var studio in _api.Get_Studio(media))
                 result.Item.AddStudio(studio);
-            foreach (var tag in _api.Get_Tag(WebContent))
+            foreach (var tag in _api.Get_Tag(media))
                 result.Item.AddTag(tag);
             try {
-                if (Equals_check.Compare_strings("youtube", WebContent.data.Media.trailer.site)) {
-                    result.Item.AddTrailerUrl("https://youtube.com/watch?v=" + WebContent.data.Media.trailer.id);
+                if (Equals_check.Compare_strings("youtube", media.trailer.site)) {
+                    result.Item.AddTrailerUrl("https://youtube.com/watch?v=" + media.trailer.id);
                 }
             } catch (Exception) { }
-            result.Item.SetProviderId(ProviderNames.AniList, WebContent.data.Media.id.ToString());
-            result.Item.Overview = WebContent.data.Media.description;
+            result.Item.SetProviderId(ProviderNames.AniList, media.id.ToString());
+            result.Item.Overview = media.description;
             try
             {
-                StartDate startDate = WebContent.data.Media.startDate;
+                StartDate startDate = media.startDate;
                 DateTime date = new DateTime(startDate.year, startDate.month, startDate.day);
                 date = date.ToUniversalTime();
                 result.Item.PremiereDate = date;
@@ -83,14 +92,14 @@ namespace Emby.Plugins.AniList
             catch (Exception) { }
             try
             {
-                EndDate endDate = WebContent.data.Media.endDate;
+                EndDate endDate = media.endDate;
                 DateTime date = new DateTime(endDate.year, endDate.month, endDate.day);
                 date = date.ToUniversalTime();
                 result.Item.EndDate = date;
             }
             catch (Exception) { }
-            int episodes = WebContent.data.Media.episodes;
-            int duration = WebContent.data.Media.duration;
+            int episodes = media.episodes;
+            int duration = media.duration;
             if (episodes > 0 && duration > 0){
                 // minutes to microseconds, needs to x10 to display correctly for some reason
                 result.Item.RunTimeTicks = episodes * duration * (long)600000000;
@@ -98,14 +107,14 @@ namespace Emby.Plugins.AniList
             try
             {
                 //AniList has a max rating of 5
-                result.Item.CommunityRating = (WebContent.data.Media.averageScore / 10);
+                result.Item.CommunityRating = (media.averageScore / 10);
             }
             catch (Exception) { }
-            foreach (var genre in _api.Get_Genre(WebContent))
+            foreach (var genre in _api.Get_Genre(media))
                 result.Item.AddGenre(genre);
             GenreHelper.CleanupGenres(result.Item);
 
-            return _GetMetadata(result, WebContent);
+            return _GetMetadata(result, media);
         }
 
         public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(U searchInfo, CancellationToken cancellationToken)

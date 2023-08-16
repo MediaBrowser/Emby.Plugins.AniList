@@ -185,10 +185,12 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
                 Name = ""
             };
 
-            result.SearchProviderName = WebContent.data.Media.title.romaji;
-            result.ImageUrl = WebContent.data.Media.coverImage.large;
+            var media = WebContent.GetMedia();
+
+            result.SearchProviderName = media.title.romaji;
+            result.ImageUrl = media.coverImage.large;
             result.SetProviderId(ProviderNames.AniList, id);
-            result.Overview = WebContent.data.Media.description;
+            result.Overview = media.description;
 
             return result;
         }
@@ -200,11 +202,11 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// <param name="preference"></param>
         /// <param name="language"></param>
         /// <returns></returns>
-        public string SelectName(RootObject WebContent, string preferredLanguage)
+        public string SelectName(BaseMedia media, string preferredLanguage)
         {
             if (string.IsNullOrEmpty(preferredLanguage) || preferredLanguage.StartsWith("en", StringComparison.OrdinalIgnoreCase))
             {
-                var title = WebContent.data.Media.title.english;
+                var title = media.title?.english;
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     return title;
@@ -212,23 +214,24 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
             }
             if (string.Equals(preferredLanguage, "ja", StringComparison.OrdinalIgnoreCase))
             {
-                var title = WebContent.data.Media.title.native;
+                var title = media.title?.native;
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     return title;
                 }
             }
 
-            return WebContent.data.Media.title.romaji;
+            return media.title?.romaji;
         }
 
         public async Task<List<PersonInfo>> GetPersonInfo(int id, CancellationToken cancellationToken)
         {
             List<PersonInfo> lpi = new List<PersonInfo>();
             RootObject WebContent = await WebRequestAPI(AniList_anime_char_link.Replace("{0}", id.ToString()), cancellationToken);
-            foreach (Edge edge in WebContent.data.Media.characters.edges)
+            foreach (Edge edge in WebContent.GetMedia().characters.edges)
             {
-                if (edge.voiceActors.Count > 0) {
+                if (edge.voiceActors.Count > 0)
+                {
                     VoiceActor va = edge.voiceActors[0];
                     PersonInfo actor = new PersonInfo();
                     PersonInfo character = new PersonInfo();
@@ -252,10 +255,10 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// </summary>
         /// <param name="WebContent"></param>
         /// <returns></returns>
-        public List<string> Get_Studio(RootObject WebContent)
+        public List<string> Get_Studio(BaseMedia media)
         {
             List<string> studios = new List<string>();
-            WebContent.data.Media.studios.edges.ForEach(edge => studios.Add(edge.node.name));
+            media.studios.edges.ForEach(edge => studios.Add(edge.node.name));
             return studios;
         }
 
@@ -264,10 +267,10 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// </summary>
         /// <param name="WebContent"></param>
         /// <returns></returns>
-        public List<string> Get_Tag(RootObject WebContent)
+        public List<string> Get_Tag(BaseMedia media)
         {
             List<string> tags = new List<string>();
-            WebContent.data.Media.tags.ForEach(tag => tags.Add(tag.name));
+            media.tags.ForEach(tag => tags.Add(tag.name));
             return tags;
         }
 
@@ -288,9 +291,9 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// </summary>
         /// <param name="WebContent"></param>
         /// <returns></returns>
-        public List<string> Get_Genre(RootObject WebContent)
+        public List<string> Get_Genre(BaseMedia media)
         {
-            return WebContent.data.Media.genres;
+            return media.genres ?? new List<string>();
         }
 
         /// <summary>
@@ -298,9 +301,9 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// </summary>
         /// <param name="WebContent"></param>
         /// <returns></returns>
-        public string Get_ImageUrl(RootObject WebContent)
+        public string Get_ImageUrl(BaseMedia media)
         {
-            return WebContent.data.Media.coverImage.large;
+            return media.coverImage?.large;
         }
 
         /// <summary>
@@ -308,9 +311,9 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// </summary>
         /// <param name="WebContent"></param>
         /// <returns></returns>
-        public string Get_Rating(RootObject WebContent)
+        public string Get_Rating(BaseMedia media)
         {
-            return (WebContent.data.Media.averageScore / 10).ToString();
+            return (media.averageScore / 10).ToString();
         }
 
         /// <summary>
@@ -318,9 +321,9 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// </summary>
         /// <param name="WebContent"></param>
         /// <returns></returns>
-        public string Get_Overview(RootObject WebContent)
+        public string Get_Overview(BaseMedia media)
         {
-            return WebContent.data.Media.description;
+            return media.description;
         }
 
         /// <summary>
@@ -433,6 +436,8 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
                     using (var reader = new StreamReader(stream))
                     {
                         var json = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+                        //_logger.Info("Anilist response: {0}", json);
 
                         return _jsonSerializer.DeserializeFromString<RootObject>(json);
                     }
