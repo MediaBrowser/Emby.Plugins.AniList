@@ -29,7 +29,22 @@ namespace Emby.Plugins.AniList
 
         public IEnumerable<PluginPageInfo> GetPages()
         {
-            return Array.Empty<PluginPageInfo>();
+            return new[]
+            {
+                new PluginPageInfo
+                {
+                    Name = "anilist",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.anilist.html",
+                    EnableInMainMenu = true,
+                    MenuIcon = "dvr"
+                },
+
+                new PluginPageInfo
+                {
+                    Name = "anilistjs",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.anilist.js"
+                }
+            };
         }
 
         private Guid _id = new Guid("043B75CD-FC2C-49CC-ACCC-4D1D60A297C5");

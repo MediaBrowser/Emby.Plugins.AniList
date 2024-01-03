@@ -17,16 +17,18 @@ namespace Emby.Plugins.AniList
     public class AniListMetadataProvider<T, U> : IRemoteMetadataProvider<T, U>, IHasOrder where T : BaseItem,IHasLookupInfo<U>,new() where U : ItemLookupInfo,new()
     {
         protected readonly IHttpClient _httpClient;
+        protected readonly IConfigurationManager _config;
         protected readonly IApplicationPaths _paths;
         protected readonly ILogger _log;
         protected readonly Api _api;
         public int Order => 8;
         public string Name => "AniList";
 
-        public AniListMetadataProvider(IApplicationPaths appPaths, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer)
+        public AniListMetadataProvider(IApplicationPaths appPaths, IConfigurationManager config, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer)
         {
             _log = logManager.GetLogger(Name);
             _httpClient = httpClient;
+            _config = config;
             _api = new Api(_log, httpClient, jsonSerializer);
             _paths = appPaths;
         }
@@ -69,7 +71,7 @@ namespace Emby.Plugins.AniList
 
             result.Item.OriginalTitle = media.title.native;
 
-            result.People = await _api.GetPersonInfo(media.id, cancellationToken);
+            result.People = await _api.GetPersonInfo(media.id, _config.GetAniListListOptions(), cancellationToken);
             foreach (var studio in _api.Get_Studio(media))
                 result.Item.AddStudio(studio);
             foreach (var tag in _api.Get_Tag(media))

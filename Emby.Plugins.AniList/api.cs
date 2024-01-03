@@ -224,7 +224,7 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
             return media.title?.romaji;
         }
 
-        public async Task<List<PersonInfo>> GetPersonInfo(int id, CancellationToken cancellationToken)
+        public async Task<List<PersonInfo>> GetPersonInfo(int id, AniListOptions config, CancellationToken cancellationToken)
         {
             List<PersonInfo> lpi = new List<PersonInfo>();
             RootObject WebContent = await WebRequestAPI(AniList_anime_char_link.Replace("{0}", id.ToString()), cancellationToken);
@@ -234,17 +234,21 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
                 {
                     VoiceActor va = edge.voiceActors[0];
                     PersonInfo actor = new PersonInfo();
-                    PersonInfo character = new PersonInfo();
                     actor.Name = va.name.first + " " + va.name.last;
                     actor.ImageUrl = va.image.large;
                     actor.Role = edge.node.name.first + " " + edge.node.name.last;
                     actor.Type = PersonType.Actor;
-                    character.Name = actor.Role;
-                    character.ImageUrl = edge.node.image.large;
-                    character.Role = actor.Name;
-                    character.Type = PersonType.GuestStar;
                     lpi.Add(actor);
-                    lpi.Add(character);
+
+                    if (config.ShouldDownloadCharacters)
+                    {
+                        PersonInfo character = new PersonInfo();
+                        character.Name = actor.Role;
+                        character.ImageUrl = edge.node.image.large;
+                        character.Role = actor.Name;
+                        character.Type = PersonType.GuestStar;
+                        lpi.Add(character);
+                    }
                 }
             }
             return lpi;
