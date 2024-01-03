@@ -311,16 +311,6 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         }
 
         /// <summary>
-        /// API call too get the rating
-        /// </summary>
-        /// <param name="WebContent"></param>
-        /// <returns></returns>
-        public string Get_Rating(BaseMedia media)
-        {
-            return (media.averageScore / 10).ToString();
-        }
-
-        /// <summary>
         /// API call to get the description
         /// </summary>
         /// <param name="WebContent"></param>

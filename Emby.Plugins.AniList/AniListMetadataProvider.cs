@@ -108,8 +108,7 @@ namespace Emby.Plugins.AniList
             }
             try
             {
-                //AniList has a max rating of 5
-                result.Item.CommunityRating = (media.averageScore / 10);
+                result.Item.CommunityRating = ((float)media.averageScore / 10);
             }
             catch (Exception) { }
             foreach (var genre in _api.Get_Genre(media))
