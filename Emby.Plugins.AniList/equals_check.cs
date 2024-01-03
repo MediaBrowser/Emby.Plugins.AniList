@@ -40,6 +40,7 @@ namespace Emby.Plugins.AniList
             a = a.Replace("-", " ", StringComparison.OrdinalIgnoreCase);
             a = a.Replace("`", "", StringComparison.OrdinalIgnoreCase);
             a = a.Replace("'", "", StringComparison.OrdinalIgnoreCase);
+            a = a.Replace("’", "", StringComparison.OrdinalIgnoreCase);
             a = a.Replace("&", "and", StringComparison.OrdinalIgnoreCase);
             a = a.Replace("(", "", StringComparison.OrdinalIgnoreCase);
             a = a.Replace(")", "", StringComparison.OrdinalIgnoreCase);
@@ -178,7 +179,7 @@ namespace Emby.Plugins.AniList
 
             a = a.ToLower().Replace(" ", "", StringComparison.OrdinalIgnoreCase).Trim().Replace(".", "", StringComparison.OrdinalIgnoreCase);
             b = b.ToLower().Replace(" ", "", StringComparison.OrdinalIgnoreCase).Trim().Replace(".", "", StringComparison.OrdinalIgnoreCase);
-
+                
             if (string.Equals(Clear_name(a), Clear_name(b), StringComparison.OrdinalIgnoreCase))
                 return true;
             if (string.Equals(Clear_name_step2(a), Clear_name_step2(b), StringComparison.OrdinalIgnoreCase))
