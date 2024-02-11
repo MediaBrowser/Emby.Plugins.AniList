@@ -20,7 +20,7 @@ namespace Emby.Plugins.AniList
 {
     public class AniListSeriesProvider : AniListMetadataProvider<Series, SeriesInfo>
     {
-        public AniListSeriesProvider(IApplicationPaths appPaths, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer) : base(appPaths, httpClient, logManager, jsonSerializer)
+        public AniListSeriesProvider(IApplicationPaths appPaths, IConfigurationManager config, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer) : base(appPaths, config, httpClient, logManager, jsonSerializer)
         {
             
         }

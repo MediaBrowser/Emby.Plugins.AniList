@@ -7,16 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Configuration\**" />
-    <EmbeddedResource Remove="Configuration\**" />
-    <None Remove="Configuration\**" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Remove="Configuration\anilist.html" />
+    <None Remove="Configuration\anilist.js" />
     <None Remove="thumb.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\anilist.html" />
+    <EmbeddedResource Include="Configuration\anilist.js" />
     <EmbeddedResource Include="thumb.png" />
   </ItemGroup>
 

@@ -10,7 +10,7 @@ namespace Emby.Plugins.AniList
 {
     public class AniListMovieProvider : AniListMetadataProvider<Movie, MovieInfo>
     {
-        public AniListMovieProvider(IApplicationPaths appPaths, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer) : base(appPaths, httpClient, logManager, jsonSerializer)
+        public AniListMovieProvider(IApplicationPaths appPaths, IConfigurationManager config, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer) : base(appPaths, config, httpClient, logManager, jsonSerializer)
         {
             
         }
