@@ -178,7 +178,7 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         /// <returns></returns>
         public async Task<RemoteSearchResult> GetAnime(string id, CancellationToken cancellationToken)
         {
-            RootObject WebContent = await WebRequestAPI(AniList_anime_link.Replace("{0}", id), cancellationToken);
+            RootObject WebContent = await WebRequestAPI(AniList_anime_link.Replace("{0}", id, StringComparison.OrdinalIgnoreCase), cancellationToken);
 
             var result = new RemoteSearchResult
             {
@@ -227,7 +227,7 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         public async Task<List<PersonInfo>> GetPersonInfo(int id, AniListOptions config, CancellationToken cancellationToken)
         {
             List<PersonInfo> lpi = new List<PersonInfo>();
-            RootObject WebContent = await WebRequestAPI(AniList_anime_char_link.Replace("{0}", id.ToString()), cancellationToken);
+            RootObject WebContent = await WebRequestAPI(AniList_anime_char_link.Replace("{0}", id.ToString(), StringComparison.OrdinalIgnoreCase), cancellationToken);
             foreach (Edge edge in WebContent.GetMedia().characters.edges)
             {
                 if (edge.voiceActors.Count > 0)
@@ -329,7 +329,7 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         public async Task<string> Search_GetSeries(string title, CancellationToken cancellationToken)
         {
             string result = null;
-            RootObject WebContent = await WebRequestAPI(SearchLink.Replace("{0}", title), cancellationToken);
+            RootObject WebContent = await WebRequestAPI(SearchLink.Replace("{0}", title, StringComparison.OrdinalIgnoreCase), cancellationToken);
             foreach (Medium media in WebContent.data.Page.media)
             {
                 //get id
@@ -367,7 +367,7 @@ query($id: Int!, $type: MediaType, $staffLanguage: StaffLanguage, $page: Int = 1
         public async Task<List<string>> Search_GetSeries_list(string title, CancellationToken cancellationToken)
         {
             List<string> result = new List<string>();
-            RootObject WebContent = await WebRequestAPI(SearchLink.Replace("{0}", title), cancellationToken);
+            RootObject WebContent = await WebRequestAPI(SearchLink.Replace("{0}", title, StringComparison.OrdinalIgnoreCase), cancellationToken);
             foreach (Medium media in WebContent.data.Page.media)
             {
                 //get id

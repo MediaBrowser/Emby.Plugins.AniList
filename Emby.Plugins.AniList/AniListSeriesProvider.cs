@@ -22,7 +22,7 @@ namespace Emby.Plugins.AniList
     {
         public AniListSeriesProvider(IApplicationPaths appPaths, IConfigurationManager config, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer) : base(appPaths, config, httpClient, logManager, jsonSerializer)
         {
-            
+
         }
 
         protected override MetadataResult<Series> _GetMetadata(MetadataResult<Series> result, BaseMedia media)
@@ -30,13 +30,16 @@ namespace Emby.Plugins.AniList
             if (result.HasMetadata)
             {
                 string status = media.status;
-                if (status == Status.RELEASING || status == Status.NOT_YET_RELEASED)
+                if (!string.IsNullOrEmpty(status))
                 {
-                    result.Item.Status = SeriesStatus.Continuing;
-                }
-                else
-                {
-                    result.Item.Status = SeriesStatus.Ended;
+                    if (string.Equals(status, Status.RELEASING, StringComparison.OrdinalIgnoreCase) || string.Equals(status, Status.NOT_YET_RELEASED, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Item.Status = SeriesStatus.Continuing;
+                    }
+                    else
+                    {
+                        result.Item.Status = SeriesStatus.Ended;
+                    }
                 }
             }
             return result;

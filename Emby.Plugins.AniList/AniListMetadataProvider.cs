@@ -51,7 +51,7 @@ namespace Emby.Plugins.AniList
 
             if (!string.IsNullOrEmpty(aid))
             {
-                WebContent = await _api.WebRequestAPI(_api.AniList_anime_link.Replace("{0}", aid), cancellationToken);
+                WebContent = await _api.WebRequestAPI(_api.AniList_anime_link.Replace("{0}", aid, StringComparison.OrdinalIgnoreCase), cancellationToken);
             }
 
             var result = new MetadataResult<T>();

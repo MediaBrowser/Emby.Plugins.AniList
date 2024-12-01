@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Configuration;
 using MediaBrowser.Controller.Entities.Movies;
+using System;
 
 namespace Emby.Plugins.AniList
 {
@@ -29,7 +30,7 @@ namespace Emby.Plugins.AniList
 
         public string Name => "AniList";
 
-        public bool Supports(BaseItem item) => item is Movie || item is Series || item is Season;
+        public bool Supports(BaseItem item) => item is Movie || item is Series;
 
         public IEnumerable<ImageType> GetSupportedImages(BaseItem item)
         {
@@ -48,7 +49,7 @@ namespace Emby.Plugins.AniList
 
             if (!string.IsNullOrEmpty(aid))
             {
-                var webContent = await _api.WebRequestAPI(_api.AniList_anime_link.Replace("{0}", aid), cancellationToken);
+                var webContent = await _api.WebRequestAPI(_api.AniList_anime_link.Replace("{0}", aid, StringComparison.OrdinalIgnoreCase), cancellationToken);
                 var media = webContent.GetMedia();
                 var primary = _api.Get_ImageUrl(media);
                 list.Add(new RemoteImageInfo

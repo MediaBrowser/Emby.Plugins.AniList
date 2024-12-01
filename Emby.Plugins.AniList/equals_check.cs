@@ -1,7 +1,6 @@
 ﻿using MediaBrowser.Model.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -34,9 +33,9 @@ namespace Emby.Plugins.AniList
         /// <returns></returns>
         public static string Clear_name(string a)
         {
-            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \(.*?\)"), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
-            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \[tvdb.*?\]"), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
-            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \{tvdb.*?\}"), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
+            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \(.*?\)", RegexOptions.IgnoreCase), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
+            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \[tvdb.*?\]", RegexOptions.IgnoreCase), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
+            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \{tvdb.*?\}", RegexOptions.IgnoreCase), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
 
             a = a.Replace(".", " ", StringComparison.OrdinalIgnoreCase);
             a = a.Replace("-", " ", StringComparison.OrdinalIgnoreCase);
@@ -47,7 +46,7 @@ namespace Emby.Plugins.AniList
             a = a.Replace("(", "", StringComparison.OrdinalIgnoreCase);
             a = a.Replace(")", "", StringComparison.OrdinalIgnoreCase);
 
-            a = a.ReplaceSafe(One_line_regex(new Regex(@"(?s)(S[0-9]+)"), a.Trim()), One_line_regex(new Regex(@"(?s)S([0-9]+)"), a.Trim()), StringComparison.OrdinalIgnoreCase);
+            a = a.ReplaceSafe(One_line_regex(new Regex(@"(?s)(S[0-9]+)", RegexOptions.IgnoreCase), a.Trim()), One_line_regex(new Regex(@"(?s)S([0-9]+)", RegexOptions.IgnoreCase), a.Trim()), StringComparison.OrdinalIgnoreCase);
 
             return a;
         }
@@ -80,12 +79,10 @@ namespace Emby.Plugins.AniList
         /// <returns></returns>
         public static string Clear_name_step2(string a)
         {
-            if (a.Contains("Gekijyouban"))
-                a = (a.Replace("Gekijyouban", "", StringComparison.OrdinalIgnoreCase) + " Movie").Trim();
-            if (a.Contains("gekijyouban"))
+            if (a.Contains("gekijyouban", StringComparison.OrdinalIgnoreCase))
                 a = (a.Replace("gekijyouban", "", StringComparison.OrdinalIgnoreCase) + " Movie").Trim();
 
-            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \(.*?\)"), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
+            a = a.Trim().ReplaceSafe(One_line_regex(new Regex(@"(?s) \(.*?\)", RegexOptions.IgnoreCase), a.Trim(), 0), "", StringComparison.OrdinalIgnoreCase);
 
             a = a.Replace(".", " ", StringComparison.OrdinalIgnoreCase);
             a = a.Replace("!", " ", StringComparison.OrdinalIgnoreCase);
@@ -156,7 +153,7 @@ namespace Emby.Plugins.AniList
         {
             if (fastmode)
             {
-                if (a[0] == b[0])
+                if (string.Equals(a.Substring(0, 1), b.Substring(0, 1), StringComparison.OrdinalIgnoreCase))
                 {
                 }
                 else
@@ -202,33 +199,33 @@ namespace Emby.Plugins.AniList
                 return true;
             if (string.Equals(a.Replace("ndseason", "", StringComparison.OrdinalIgnoreCase), b, StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 3), One_line_regex(new Regex(@"((.*)s([0 - 9]))"), b, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))"), b, 3), StringComparison.OrdinalIgnoreCase))
-                if (!string.IsNullOrEmpty(One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 3)))
+            if (string.Equals(One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 3), One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), b, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), b, 3), StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 3)))
                     return true;
-            if (string.Equals(One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 3), b, StringComparison.OrdinalIgnoreCase))
-                if (!string.IsNullOrEmpty(One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))"), a, 3)))
+            if (string.Equals(One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 3), b, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 2) + One_line_regex(new Regex(@"((.*)s([0 - 9]))", RegexOptions.IgnoreCase), a, 3)))
                     return true;
             if (string.Equals(a.Replace("rdseason", "", StringComparison.OrdinalIgnoreCase), b.Replace("rdseason", "", StringComparison.OrdinalIgnoreCase), StringComparison.OrdinalIgnoreCase))
                 return true;
             if (string.Equals(a.Replace("rdseason", "", StringComparison.OrdinalIgnoreCase), b, StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(a.Replace("2", "secondseason").ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), a, 0), ""), b.Replace("2", "secondseason").ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), b, 0), ""), StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(a.Replace("2", "secondseason", StringComparison.OrdinalIgnoreCase).ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), a, 0), ""), b.Replace("2", "secondseason", StringComparison.OrdinalIgnoreCase).ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), b, 0), ""), StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(a.Replace("2", "secondseason").ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), a, 0), ""), b, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(a.Replace("2", "secondseason", StringComparison.OrdinalIgnoreCase).ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), a, 0), ""), b, StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(a.Replace(" 2", ":secondseason").ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), a, 0), ""), b.Replace(" 2", ":secondseason").ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), b, 0), ""), StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(a.Replace(" 2", ":secondseason", StringComparison.OrdinalIgnoreCase).ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), a, 0), ""), b.Replace(" 2", ":secondseason", StringComparison.OrdinalIgnoreCase).ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), b, 0), ""), StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(a.Replace(" 2", ":secondseason").ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), a, 0), ""), b, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(a.Replace(" 2", ":secondseason", StringComparison.OrdinalIgnoreCase).ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), a, 0), ""), b, StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(a.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), a, 0), ""), b.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), b, 0), ""), StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(a.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), a, 0), ""), b.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), b, 0), ""), StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(a.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), a, 0), ""), b, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(a.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), a, 0), ""), b, StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(b.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), b, 0), "").Replace("  2", ": second Season"), a, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(b.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), b, 0), "").Replace("  2", ": second Season", StringComparison.OrdinalIgnoreCase), a, StringComparison.OrdinalIgnoreCase))
                 return true;
             if (string.Equals(a.Replace(" 2ndseason", ":secondseason", StringComparison.OrdinalIgnoreCase) + " vs " + b, a, StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (string.Equals(a.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)"), a, 0), "").Replace("  2", ":secondseason"), b, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(a.ReplaceSafe(One_line_regex(new Regex(@"(?s)\(.*?\)", RegexOptions.IgnoreCase), a, 0), "").Replace("  2", ":secondseason", StringComparison.OrdinalIgnoreCase), b, StringComparison.OrdinalIgnoreCase))
                 return true;
             return false;
         }
@@ -246,7 +243,7 @@ namespace Emby.Plugins.AniList
             int highest_number = 0;
             while (!string.IsNullOrEmpty(regex_c) && x < 100)
             {
-                regex_c = (One_line_regex(new Regex(@"(" + symbol + @"+)"), input.ToLower().Trim(), 1, x)).Trim();
+                regex_c = (One_line_regex(new Regex(@"(" + symbol + @"+)", RegexOptions.IgnoreCase), input.ToLower().Trim(), 1, x)).Trim();
                 if (highest_number < regex_c.Count())
                     highest_number = regex_c.Count();
                 x++;
