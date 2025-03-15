@@ -18,11 +18,19 @@ using MediaBrowser.Controller.Entities.Movies;
 //API v2
 namespace Emby.Plugins.AniList
 {
-    public class AniListSeriesProvider : AniListMetadataProvider<Series, SeriesInfo>
+    public class AniListSeriesProvider : AniListMetadataProvider<Series, SeriesInfo>, IHasSupportedExternalIdentifiers
     {
         public AniListSeriesProvider(IApplicationPaths appPaths, IConfigurationManager config, IHttpClient httpClient, ILogManager logManager, IJsonSerializer jsonSerializer) : base(appPaths, config, httpClient, logManager, jsonSerializer)
         {
 
+        }
+
+        public string[] GetSupportedExternalIdentifiers()
+        {
+            return new[] {
+
+                ProviderNames.AniList
+            };
         }
 
         protected override MetadataResult<Series> _GetMetadata(MetadataResult<Series> result, BaseMedia media)
